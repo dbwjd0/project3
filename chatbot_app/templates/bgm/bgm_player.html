@@ -1,0 +1,16 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>{% trans "BGM Player" %}</title>
+</head>
+<body>
+    <audio id="bgm_iframe_player" loop>
+        <source src="{% static 'audio/walking_bgm.mp3' %}" type="audio/mpeg">
+        <!-- You might want to make this configurable or add multiple sources -->
+    </audio>
+    <script src="{% static 'iframe_bgm_player.js' %}"></script>
+</body>
+</html>

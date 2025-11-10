@@ -1,0 +1,182 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans "퀴즈 기록" %}</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <style>
+        #toggle-bgm-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'VT323', monospace;
+            z-index: 101;
+        }
+        #bgm-volume-slider {
+            position: absolute;
+            top: 20px;
+            left: 120px; /* Adjust as needed to position next to the button */
+            width: 100px;
+            z-index: 101;
+            -webkit-appearance: none;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            height: 10px;
+            outline: none;
+        }
+        #bgm-volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+        }
+        #bgm-volume-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+        }
+        body {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .history-container {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            max-width: 800px;
+            width: 90%;
+        }
+        .history-container h1 {
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            color: #a9d1ff;
+        }
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .history-table th,
+        .history-table td {
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 10px;
+            text-align: left;
+        }
+        .history-table th {
+            background-color: rgba(255, 255, 255, 0.1);
+            font-size: 1.1em;
+        }
+        .history-table tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        .history-table tr:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        .no-results {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+        .back-button {
+            margin-top: 30px;
+        }
+        .btn-primary {
+            background-color: #ff9800;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+        }
+        .btn-primary:hover {
+            background-color: #fb8c00;
+        }
+        .background-video {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -100;
+            background-size: cover;
+        }
+    </style>
+</head>
+<body>
+    <button id="toggle-bgm-btn">{% trans "BGM OFF" %}</button>
+    <input type="range" id="bgm-volume-slider" min="0" max="100" value="50">
+    <!-- 게임 페이지용 BGM (login.html 제외) -->
+    <audio id="bgm2" loop>
+        <source src="{% static 'music/game_bgm.mp3' %}" type="audio/mpeg">
+    </audio>
+
+    <script src="{% static 'bgm.js' %}"></script>
+
+    <video autoplay muted loop class="background-video">
+        <source src="{% static 'img/Quiz History.mp4' %}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    {% include 'includes/top_menu.html' with show_room_link=False %}
+    <div class="history-container">
+        <h1>{% trans "나의 퀴즈 기록" %}</h1>
+
+        {% if quiz_results %}
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>{% trans "장르" %}</th>
+                        <th>{% trans "문제 수" %}</th>
+                        <th>{% trans "점수" %}</th>
+                        <th>{% trans "완료일" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in quiz_results %}
+                        <tr>
+                            <td>{{ result.get_genre_display }}</td>
+                            <td>{{ result.num_questions }}</td>
+                            <td>{{ result.score }} / {{ result.num_questions }}</td>
+                            <td>{{ result.date_completed|date:"Y년 m월 d일 H시 i분" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="no-results">{% trans "아직 퀴즈 기록이 없습니다." %}</p>
+        {% endif %}
+
+        <div class="back-button">
+            <a href="{% url 'quiz_mode' %}" class="btn btn-primary">{% trans "퀴즈 모드로 돌아가기" %}</a>
+        </div>
+    </div>
+    <script type="text/javascript" src="{% url 'javascript-catalog' %}"></script>
+</body>
+</html>

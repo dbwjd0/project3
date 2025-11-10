@@ -1,0 +1,404 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% blocktrans with chatbot_name=user.profile.chatbot_name %}{{ chatbot_name }}의 상태{% endblocktrans %}</title>
+    {% load static %}
+    {% load i18n %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+            <style>
+            .button-container {
+                display: flex; /* Use flexbox for alignment */
+                justify-content: flex-end; /* Align items to the right */
+                gap: 10px; /* Space between buttons */
+                margin-bottom: 20px;
+            }
+            .profile-edit-link, .personal-info-link {
+                text-decoration: none;
+                padding: 8px 15px;
+                background-color: #5E35B1;
+                color: white;
+                border-radius: 5px;
+                transition: background-color 0.3s;
+            }
+            .profile-edit-link:hover, .personal-info-link:hover {
+                background-color: #4527a0;
+            }
+            #toggle-bgm-btn {
+                position: absolute;
+                top: 20px;
+                left: 20px;
+                padding: 10px;
+                background-color: rgba(0, 0, 0, 0.5);
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-family: 'VT323', monospace;
+                z-index: 101;
+            }        #bgm-volume-slider {
+            position: absolute;
+            top: 20px;
+            left: 120px; /* Adjust as needed to position next to the button */
+            width: 100px;
+            z-index: 101;
+            -webkit-appearance: none;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            height: 10px;
+            outline: none;
+        }
+        #bgm-volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+        }
+        #bgm-volume-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+        }
+        body {
+            display: flex;
+            height: auto;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: rgba(0, 0, 0, 0.9);
+            font-family: 'Arial', sans-serif;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .status-container {
+            background-color: rgb(136, 241, 255);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+            text-align: left;
+        }
+        .status-container h1 {
+            color: #5E35B1;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .status-item {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        .status-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .status-item h2 {
+            color: #333;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        .status-item p, .status-item ul {
+            color: #555;
+            line-height: 1.6;
+            min-height: 120px; /* Set a minimum height to prevent layout shifts */
+        }
+        .status-item ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            padding-left: 0;
+        }
+        .status-item li {
+            margin-bottom: 5px;
+        }
+        .pagination-controls {
+            text-align: center;
+            margin-top: 15px;
+        }
+        .pagination-controls button {
+            background-color: #5E35B1;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .pagination-controls button:disabled {
+            background-color: #000000;
+            cursor: not-allowed;
+        }
+        .pagination-controls button:hover:not(:disabled) {
+            background-color: #4527a0;
+        }
+        .page-info {
+            margin: 0 15px;
+            font-weight: bold;
+            color: #333;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+            color: #5E35B1;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        /* Modal Styles */
+        .relationship-item {
+            cursor: pointer;
+            transition: background-color 0.3s;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        .relationship-item:hover {
+            background-color: #f0f0f0;
+        }
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.4); 
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* 스크롤바를 위한 CSS 추가 */
+        #facts-list, #relationships-list {
+            max-height: 200px; /* 최대 높이 설정 */
+            overflow-y: auto;  /* 내용이 넘칠 때만 수직 스크롤바 표시 */
+            padding-right: 15px; /* 스크롤바를 위한 공간 확보 */
+            min-height: 50px; /* 내용이 적을 때 레이아웃이 너무 작아지는 것을 방지 */
+        }
+        
+    </style>
+</head>
+<body>
+    <button id="toggle-bgm-btn">{% trans "BGM OFF" %}</button>
+    <input type="range" id="bgm-volume-slider" min="0" max="100" value="50">
+    <div class="status-container">
+        <div class="button-container">
+            <a href="{% url 'edit_profile' %}" class="profile-edit-link">{% trans "프로필 수정" %}</a>
+            <a href="{% url 'view_personal_info' %}" class="personal-info-link">{% trans "개인정보 보기" %}</a>
+        </div>
+        <h1>{% blocktrans with chatbot_name=user.profile.chatbot_name %}{{ chatbot_name }}의 현재 상태{% endblocktrans %}</h1>
+
+        <div class="status-item">
+            <h2>{% trans "호감도" %}</h2>
+            <p style="min-height: 0;">
+                {% blocktrans with affinity_score=affinity_score %}현재 호감도 점수: <strong>{{ affinity_score }}점</strong>{% endblocktrans %}
+                <br>
+                {% if affinity_score < 50 %}
+                    ({% trans "아직은 츤데레 모드! 좀 더 친해져야겠어." %})
+                {% elif affinity_score < 100 %}
+                    ({% trans "장난꾸러기 모드! 가끔 짓궂은 장난을 칠 거야." %})
+                {% else %}
+                    ({% trans "이제는 다정한 친구! 더 많은 이야기를 나눌 수 있을 거야." %})
+                {% endif %}
+            </p>
+        </div>
+
+        <div class="status-item">
+            <h2>{% trans "기억하는 사실" %}</h2>
+            <ul id="facts-list"></ul>
+            <div id="facts-pagination" class="pagination-controls" style="display: none;">
+                <button id="facts-prev">&lt; {% trans "이전" %}</button>
+                <span id="facts-page-info" class="page-info"></span>
+                <button id="facts-next">{% trans "다음" %} &gt;</button>
+            </div>
+            <p id="no-facts-message" style="display: none;">{% trans "아직 사용자에 대해 기억하는 사실이 없어. 대화를 통해 더 많은 것을 알려줘!" %}</p>
+        </div>
+
+        <div class="status-item">
+            <h2>{% trans "인간관계" %}</h2>
+            <ul id="relationships-list"></ul>
+            <div id="relationships-pagination" class="pagination-controls" style="display: none;">
+                <button id="rel-prev">&lt; {% trans "이전" %}</button>
+                <span id="rel-page-info" class="page-info"></span>
+                <button id="rel-next">{% trans "다음" %} &gt;</button>
+            </div>
+            <p id="no-relationships-message" style="display: none;">{% trans "아직 사용자의 인간관계에 대한 정보가 없어." %}</p>
+        </div>
+
+        <a href="{% url 'room' %}" class="back-link">{% trans "방으로 돌아가기" %}</a>
+    </div>
+
+    <!-- 관계 상세 모달 -->
+    <div id="relationship-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modal-name"></h2>
+            <p>{% blocktrans %}<strong>관계 유형:</strong> <span id="modal-relationship-type"></span>{% endblocktrans %}</p>
+            <p>{% blocktrans %}<strong>포지션:</strong> <span id="modal-position"></span>{% endblocktrans %}</p>
+            <p>{% blocktrans %}<strong>특징:</strong> <span id="modal-traits"></span>{% endblocktrans %}</p>
+            <button>{% trans "수정" %}</button>
+            <button>{% trans "삭제" %}</button>
+        </div>
+    </div>
+
+    {{ core_facts|json_script:"core-facts-data" }}
+    {{ user_relationships|json_script:"relationships-data" }}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('relationship-modal');
+            const modalClose = document.querySelector('#relationship-modal .close');
+
+            function setupPagination(config) {
+                const data = JSON.parse(document.getElementById(config.dataId).textContent);
+                const listElement = document.getElementById(config.listId);
+                const noItemsMessage = document.getElementById(config.noItemsId);
+                const paginationControls = document.getElementById(config.paginationId);
+                const prevButton = document.getElementById(config.prevBtnId);
+                const nextButton = document.getElementById(config.nextBtnId);
+                const pageInfo = document.getElementById(config.pageInfoId);
+
+                if (!data || data.length === 0) {
+                    noItemsMessage.style.display = 'block';
+                    listElement.style.display = 'none';
+                    paginationControls.style.display = 'none';
+                    return;
+                }
+
+                paginationControls.style.display = 'block';
+                let currentPage = 1;
+                const itemsPerPage = 5;
+                const totalPages = Math.ceil(data.length / itemsPerPage);
+
+                function renderPage(page) {
+                    listElement.innerHTML = '';
+                    const start = (page - 1) * itemsPerPage;
+                    const end = start + itemsPerPage;
+                    const pageData = data.slice(start, end);
+
+                    pageData.forEach(item => {
+                        const li = config.renderItem(item);
+                        listElement.appendChild(li);
+                    });
+
+                    pageInfo.textContent = `${page} / ${totalPages}`;
+                    prevButton.disabled = page === 1;
+                    nextButton.disabled = page === totalPages;
+                }
+
+                prevButton.addEventListener('click', () => {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        renderPage(currentPage);
+                    }
+                });
+
+                nextButton.addEventListener('click', () => {
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        renderPage(currentPage);
+                    }
+                });
+
+                renderPage(currentPage);
+            }
+
+            // Setup for Facts Pagination
+            setupPagination({
+                dataId: 'core-facts-data',
+                listId: 'facts-list',
+                noItemsId: 'no-facts-message',
+                paginationId: 'facts-pagination',
+                prevBtnId: 'facts-prev',
+                nextBtnId: 'facts-next',
+                pageInfoId: 'facts-page-info',
+                renderItem: (fact) => {
+                    const li = document.createElement('li');
+                    li.textContent = `${fact.fact_type}: ${fact.content}`;
+                    return li;
+                }
+            });
+
+            // Setup for Relationships Pagination
+            setupPagination({
+                dataId: 'relationships-data',
+                listId: 'relationships-list',
+                noItemsId: 'no-relationships-message',
+                paginationId: 'relationships-pagination',
+                prevBtnId: 'rel-prev',
+                nextBtnId: 'rel-next',
+                pageInfoId: 'rel-page-info',
+                renderItem: (rel) => {
+                    const li = document.createElement('li');
+                    li.className = 'relationship-item';
+                    li.dataset.name = rel.name;
+                    li.dataset.relationship_type = rel.relationship_type;
+                    li.dataset.position = rel.position || '';
+                    li.dataset.traits = rel.traits || '';
+                    li.innerHTML = `<strong>${rel.name}</strong> (${rel.relationship_type})`;
+                    
+                    li.addEventListener('click', function() {
+                        document.getElementById('modal-name').textContent = this.dataset.name;
+                        document.getElementById('modal-relationship-type').textContent = this.dataset.relationship_type;
+                        document.getElementById('modal-position').textContent = this.dataset.position;
+                        document.getElementById('modal-traits').textContent = this.dataset.traits;
+                        modal.style.display = "block";
+                    });
+                    return li;
+                }
+            });
+
+            // 모달 닫기 로직
+            modalClose.onclick = function() {
+                modal.style.display = "none";
+            }
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+        });
+    </script>
+
+    <!-- 게임 페이지용 BGM (login.html 제외) -->
+    <audio id="bgm2" loop>
+        <source src="{% static 'music/game_bgm.mp3' %}" type="audio/mpeg">
+    </audio>
+
+    <script src="{% static 'bgm.js' %}"></script>
+    <script type="text/javascript" src="{% url 'javascript-catalog' %}"></script>
+</body>
+</html>

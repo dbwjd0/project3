@@ -1,0 +1,248 @@
+html, body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+body { /* Remove overflow: hidden from body specifically */
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.9);  
+    align-items: center;
+}
+
+.chatbot-container {
+    display: block; /* Changed to block to allow chat-window to take full width */
+    width: 1200px;
+    max-width: 1200px;
+    height: 800px;
+    max-height: 800px;
+    background-image: url('Chat_History.jpg');
+    background-size: cover;
+    background-position: center;  
+    background-color: transparent; /* Make it fully transparent to show the image clearly */
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+.chat-window {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 100%; /* Ensure chat-window takes full width */
+    height: 100%; /* Ensure chat-window fills the height of its parent */
+}
+
+.chat-log {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    border-bottom: 1px solid #787878;
+}
+
+.message {
+    display: flex;
+    align-items: flex-end; /* Align items to the bottom */
+    margin-bottom: 10px;
+    max-width: 80%;
+    gap: 8px; /* Add space between message and timestamp */
+}
+
+.message p {
+    margin: 0;
+    padding: 8px 12px;
+    border-radius: 15px;
+    max-width: 100%;
+}
+
+.user-message {
+    background-color: #c9f9ff;
+    align-self: flex-end;
+    margin-left: auto;
+    flex-direction: row-reverse; /* Reverse order for user */
+}
+
+.user-message p {
+    background-color: #c9f9ff;
+}
+
+.bot-message {
+    background-color: #c4c4c4;
+    align-self: flex-start;
+    margin-right: auto;
+}
+
+.bot-message p {
+    background-color: #c4c4c4;
+}
+
+.chat-input {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #eee;
+}
+
+.chat-input button {
+    padding: 10px 20px;
+    background-color: #ff9800;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    outline: none;
+}
+
+.chat-input button:hover {
+    background-color: #fb8c00;
+}
+
+/* --- Timeline Styles --- */
+.date-separator {
+    text-align: center;
+    margin: 15px auto;
+    padding: 5px 15px;
+    background-color: #e0e0e0;
+    border-radius: 12px;
+    font-size: 12px;
+    color: #555;
+    width: fit-content;
+}
+
+.timestamp {
+    font-size: 11px;
+    color: #888;
+    white-space: nowrap;
+    margin-bottom: 5px; /* Align with the bottom of the message bubble */
+}
+
+/* Icon Button Styles */
+.chat-input .icon-button {
+    background-color: transparent;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+    border-radius: 50%;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.chat-input .icon-button:hover {
+    background-color: transparent; /* 배경색은 투명하게 유지 */
+    color: #000; /* 아이콘 색상만 진하게 변경 */
+}
+
+.chat-input .icon-button svg {
+    width: 16px; /* Adjust icon size */
+    height: 16px;
+}
+
+/* Image Preview Container Styles */
+.preview-container {
+    position: relative;
+    padding: 10px;
+    margin: 0 10px 10px 10px; /* top, right, bottom, left */
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background-color: #f9f9f9;
+}
+
+.preview-container #image-preview {
+    max-width: 100%;
+    max-height: 150px; /* Limit preview height */
+    border-radius: 8px;
+    display: block;
+}
+
+.preview-container #clear-image-button {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: transparent; /* 배경색 투명하게 */
+    /* color: white; */ /* 아이콘 색상 상위 규칙에서 상속 */
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    transition: background-color 0.2s, color 0.2s; /* 부드러운 전환 효과 추가 */
+}
+
+.preview-container #clear-image-button:hover {
+    background-color: transparent; /* 호버 시에도 배경 투명 유지 */
+    color: #000; /* 호버 시 아이콘 색상 진하게 변경 */
+}
+
+.preview-container #clear-image-button svg {
+    width: 16px;
+    height: 16px;
+    fill: #555; /* 기본 아이콘 색상 강제 지정 */
+}
+
+.preview-container #clear-image-button:hover svg {
+    fill: #000; /* 호버 시 아이콘 색상 진하게 변경 */
+}
+
+.top-menu {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px 15px;
+    border-radius: 10px;
+    color: white;
+    z-index: 100;
+}
+
+.top-menu a {
+    color: #a9d1ff;
+    text-decoration: none;
+    margin-left: 15px;
+}
+
+    .top-menu a:hover {
+        text-decoration: underline;
+    }
+
+.status-container {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 30px;
+    width: 100%;
+    max-width: 600px;
+    text-align: left;
+    position: relative; /* Add this */
+}
+
+    .edit-profile-link {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        left: auto;
+        display: inline-block;
+        padding: 6px 12px;
+        background-color: #5E35B1; /* A purple color, similar to pagination buttons */
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 0.8em;
+        font-weight: bold;
+        transition: background-color 0.3s;
+        z-index: 10;
+    }
+
+    .edit-profile-link:hover {
+        background-color: #4527a0; /* Darker purple on hover */
+    }

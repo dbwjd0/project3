@@ -1,0 +1,423 @@
+/* game_chat.css */
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Temporarily removed for testing */
+    font-family: 'Malgun Gothic', sans-serif;
+}
+
+.background-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Cover the entire container while maintaining aspect ratio */
+    z-index: -1; /* Place the video behind other content */
+}
+
+.game-container {
+    width: 100%;
+    height: 100%;
+    /* background-image: url('/static/img/집 내부 고화질.png'); */
+    /* background-size: 100% 100%; */
+    /* background-repeat: no-repeat; */
+    /* background-position: center; */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    /* overflow: hidden; */ /* Temporarily removed for testing */
+}
+
+#saved-info-notification {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #333;
+    padding: 12px 20px;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    font-size: 0.95em;
+    font-weight: 500;
+    display: none; /* Initially hidden */
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out, top 0.5s ease-in-out;
+}
+
+#saved-info-notification.show {
+    display: block;
+    opacity: 1;
+    top: 30px;
+}
+
+.top-menu {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px 15px;
+    border-radius: 10px;
+    color: white;
+    z-index: 100;
+}
+
+.top-menu a {
+    color: #a9d1ff;
+    text-decoration: none;
+    margin-left: 15px;
+}
+
+.top-menu a:hover {
+    text-decoration: underline;
+}
+
+.character-container {
+    position: absolute;
+    bottom: -30%;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 130%;
+    z-index: 10;
+}
+
+.character-container img {
+    height: 100%;
+    object-fit: contain;
+    /* 캐릭터가 대화창 위에 오도록 */
+    position: relative; 
+    bottom: -60px; /* 대화창 높이와 겹치지 않게 조정 */
+}
+
+
+
+
+.dialogue-box {
+    position: absolute;
+    bottom: 80px; /* 입력창 위로 올림 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    max-width: 1000px;
+    height: 170px;
+    background-color: rgba(0, 0, 0, 0.75);
+    border: 2px solid #a9d1ff;
+    border-radius: 15px;
+    padding: 20px;
+    color: white;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+}
+
+.dialogue-nav-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid #a9d1ff;
+    border-radius: 5px;
+    color: white;
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 5px 10px;
+    z-index: 21;
+}
+
+.dialogue-nav-button:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.dialogue-nav-button.hidden {
+    display: none;
+}
+
+#speaker-name {
+    font-weight: bold;
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    color: #a9d1ff;
+}
+
+#dialogue-text {
+    font-size: 1.1em;
+    line-height: 1.5;
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.chat-input-container {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    z-index: 30;
+    background-color: #1a1a1a;
+    padding: 10px 0;
+}
+
+.chat-input {
+    width: 80%;
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+}
+
+#user-input {
+    flex-grow: 1;
+    padding: 10px;
+    border-radius: 20px;
+    border: 1px solid #555;
+    background-color: #333;
+    color: white;
+    margin: 0 10px;
+}
+
+#friend-message-input {
+    flex-grow: 1;
+    padding: 10px;
+    border-radius: 20px;
+    border: 1px solid #555;
+    background-color: #333;
+    color: white;
+    margin: 0 10px;
+}
+
+#friend-receiver-select {
+    width: 150px; /* 친구 선택 드롭다운 너비 */
+    flex-grow: 0; /* 고정 너비 설정 시 flex-grow 비활성화 */
+    padding: 10px;
+    border-radius: 20px;
+    border: 1px solid #555;
+    background-color: #333;
+    color: white;
+    margin: 0 10px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23a9d1ff%22%20d%3D%22M287%20197.3L159.9%2069.8c-4.8-4.8-12.5-4.8-17.3%200L5.4%20197.3c-3.6%203.6-5.4%208.4-5.4%2013.1%200%204.7%201.8%209.2%205.4%2012.9l12.9%2012.9c3.6%203.6%208.1%205.4%2012.9%205.4%204.7%200%209.2-1.8%2012.9-5.4L146%20127.2l110.2%20110.2c3.6%203.6%208.1%205.4%2012.9%205.4%204.7%200%209.2-1.8%2012.9-5.4l12.9-12.9c3.7-3.6%205.5-8.1%205.5-12.9.1-4.7-1.7-9.2-5.3-12.8z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+    padding-right: 30px; /* Ensure text doesn't overlap with arrow */
+}
+
+.icon-button, #send-button, #send-friend-message-button {
+    background: none;
+    border: none;
+    color: #a9d1ff;
+    cursor: pointer;
+    font-size: 1.5em;
+    padding: 5px;
+    /* position: relative; /* For unread indicator positioning */
+}
+
+#unread-messages-button {
+    background-color: #dc3545; /* Red background for attention */
+    color: white;
+    border-radius: 50%;
+    width: 30px; /* Smaller, more icon-like */
+    height: 30px;
+    font-size: 1.2em;
+    display: flex; /* Use flexbox for centering content */
+    justify-content: center;
+    align-items: center;
+    margin-left: 5px; /* Space from message button */
+    border: none; /* Remove default button border */
+    cursor: pointer;
+}
+
+#unread-messages-button .unread-indicator {
+    position: static; /* Remove absolute positioning */
+    display: block; /* Ensure it takes up space */
+    width: auto;
+    height: auto;
+    font-size: 1em; /* Adjust font size relative to button */
+    line-height: 1; /* Reset line height */
+    text-align: center;
+    background-color: transparent; /* No background for the span itself */
+    color: white; /* Ensure the '!' is white */
+}
+
+#send-button, #send-friend-message-button {
+    font-size: 1em;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+}
+
+.unread-indicator {
+    position: absolute;
+    top: -5px; /* Adjust position slightly */
+    right: -5px; /* Adjust position slightly */
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    width: 20px; /* Increased size */
+    height: 20px; /* Increased size */
+    font-size: 0.9em; /* Slightly larger font */
+    line-height: 20px; /* Match height for vertical centering */
+    text-align: center;
+    display: block;
+}
+
+.location-permission {
+    display: flex;
+    align-items: center;
+    color: white;
+    margin-left: 15px;
+}
+
+/* 이미지 미리보기 */
+.preview-container {
+    position: absolute;
+    bottom: 60px; /* 입력창 바로 위 */
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.8);
+    padding: 10px;
+    border-radius: 10px;
+    z-index: 40;
+}
+
+#image-preview {
+    max-width: 150px;
+    max-height: 150px;
+    border-radius: 5px;
+}
+
+#clear-image-button {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: white;
+    color: black;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    border: none;
+    cursor: pointer;
+    font-size: 1em;
+    line-height: 25px;
+    text-align: center;
+}
+
+/* Emoticon styles */
+.emoticon-preview-container {
+    position: absolute;
+    bottom: 70px; /* 입력창 바로 위 */
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.8);
+    padding: 10px;
+    border-radius: 10px;
+    z-index: 40;
+    width: 100px; /* 정사각형에 가깝게 */
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #a9d1ff; /* 채팅창과 유사한 테두리 */
+}
+
+#emoticon-preview {
+    max-width: 80px;
+    max-height: 80px;
+}
+
+#clear-emoticon-button {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: white;
+    color: black;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    border: none;
+    cursor: pointer;
+    font-size: 1em;
+    line-height: 25px;
+    text-align: center;
+}
+
+.emoticon-palette {
+    position: absolute;
+    bottom: 70px; /* 입력창 바로 위 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    max-width: 400px;
+    background-color: rgba(0, 0, 0, 0.9);
+    border: 1px solid #a9d1ff;
+    border-radius: 10px;
+    padding: 15px;
+    z-index: 50;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    gap: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.emoticon-item {
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.emoticon-item:hover {
+    transform: scale(1.1);
+}
+
+.chat-emoticon {
+    width: 28px; /* 채팅 텍스트에 맞춰 크기 조정 */
+    height: 28px;
+    vertical-align: middle; /* 텍스트와 수직 정렬 */
+    margin: 0 2px; /* 좌우 약간의 여백 */
+}
+
+/* AI Emoticon Bubble */
+.ai-emoticon-bubble {
+    position: absolute;
+    top: calc(40% - 230px); /* 50px 추가로 위로 이동 */
+    left: calc(85% + 50px); /* 30px 오른쪽으로 이동 */
+    transform: translateY(-50%);
+    width: 150px;
+    height: 150px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 20px; /* 네모난 말풍선 */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    z-index: 15; /* 캐릭터와 대화창 사이 */
+    border: 2px solid #a9d1ff;
+}
+
+.ai-emoticon-bubble::after {
+    content: '';
+    position: absolute;
+    left: -18px; /* 말풍선 꼬리 위치 */
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 10px;
+    border-style: solid;
+    border-color: transparent rgba(255, 255, 255, 0.9) transparent transparent;
+}
+
+#ai-emoticon-img {
+    /* 강력한 중앙 정렬 방식 적용 */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 95%; /* 크기를 키워 여백을 줄임 */
+    max-height: 95%;
+    object-fit: contain;
+}
